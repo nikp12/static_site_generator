@@ -1,6 +1,6 @@
 def convert_to_html(value, tag):
-    html_head = f"<{tag}> "
-    html_tail = f" </{tag}>"
+    html_head = f"<{tag}>"
+    html_tail = f"</{tag}>"
     return f"{html_head}{value}{html_tail}"
 
 def convert_to_link(value, tag, props):
@@ -8,8 +8,8 @@ def convert_to_link(value, tag, props):
     for att in props:
         props_str += f"{att}=\"{props[att]}\" "
     props_str = props_str[0:-1]
-    html_head = f"<{tag} {props_str}> "
-    html_tail = f" </{tag}>"
+    html_head = f"<{tag} {props_str}>"
+    html_tail = f"</{tag}>"
     return f"{html_head}{value}{html_tail}"
 
 class HTMLNode:
@@ -42,17 +42,17 @@ class LeafNode(HTMLNode):
         return convert_to_html(self.value, self.tag)
     
 class ParentNode(HTMLNode):
-    def __init__(tag, children, props=None):
+    def __init__(self, tag, children, props=None):
         super().__init__(tag, None, children, props)
     def to_html(self):
-        output_html = ""
         if self.tag == None:
             raise ValueError("node must have a tag")
         if self.children == None:
             raise ValueError("node must have a child")
         for child in self.children:
-            print("DEBUG", child)
-            return child.to_html()
-        output_html += self.to_html
-        return output_html
+            self.value = child.to_html()
+        if self.props == None:
+            return convert_to_html(self.value, self.tag)
+        else:
+            return convert_to_link(self.value, self.tag, self.props)
 
